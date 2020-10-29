@@ -31,6 +31,15 @@ from time import sleep
 
 
 def main():
+    def is_retweet(entry):
+        return 'retweeted_status' in entry.keys()
+
+    def get_source(entry):
+        if '<' in entry["source"]:
+            return entry["source"].split('>')[1].split('<')[0]
+        else:
+            return entry["source"]
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--outputfile", help="Output file name with extension")
     parser.add_argument("-i", "--inputfile", help="Input file name with extension")
@@ -48,7 +57,7 @@ def main():
     api = tweepy.API(auth)
     
     output_file = args.outputfile
-    output_file_noformat = output_file.split(".",maxsplit=1)[0]
+    output_file_noformat = output_file.split(".", maxsplit=1)[0]
     print(output_file)
     output_file = '{}'.format(output_file)
     output_file_short = '{}_short.json'.format(output_file_noformat)
@@ -93,12 +102,13 @@ def main():
         with open(output_file, 'a') as outfile:
             for go in range(i):
                 print('currently getting {} - {}'.format(start, end))
-                sleep(6)  # needed to prevent hitting API rate limit
+                sleep(5)  # needed to prevent hitting API rate limit
                 id_batch = ids[start:end]
                 start += 100
                 end += 100
                 tweets = api.statuses_lookup(id_batch)
                 for tweet in tweets:
+                    # print (tweet)
                     json.dump(tweet._json, outfile)
                     outfile.write('\n')
     except:
@@ -108,17 +118,6 @@ def main():
     zf = zipfile.ZipFile('{}.zip'.format(output_file_noformat), mode='w')
     zf.write(output_file, compress_type=compression)
     zf.close()
-
-
-    def is_retweet(entry):
-        return 'retweeted_status' in entry.keys()
-
-    def get_source(entry):
-        if '<' in entry["source"]:
-            return entry["source"].split('>')[1].split('<')[0]
-        else:
-            return entry["source"]
-    
     
     print('creating minimized json master file')
     with open(output_file_short, 'w') as outfile:
@@ -138,7 +137,7 @@ def main():
                 json.dump(t, outfile)
                 outfile.write('\n')
         
-    f = csv.writer(open('{}.csv'.format(output_file_noformat), 'w'))
+    f = csv.writer(open('{}.csv'.format(output_file_noformat), 'w', newline='', encoding='utf-8'))
     print('creating CSV version of minimized json master file') 
     fields = ["favorite_count", "source", "text", "in_reply_to_screen_name", "is_retweet", "created_at", "retweet_count", "id_str"]                
     f.writerow(fields)       
