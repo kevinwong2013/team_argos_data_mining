@@ -3,3 +3,10 @@ __pycache__
 LOG.txt
 *.json
 *.log
+/hydrated_data/2020-10-21_clean-dataset.tsv
+/hydrated_data/2020-10-21_clean-dataset_hydrated.csv
+/hydrated_data/2020-10-21_clean-dataset_hydrated.zip
+/hydrated_data/2020-10-21_clean-dataset_hydrated_short.json
+/hydrated_data/2020-10-22_clean-dataset.tsv
+/hydrated_data/2020-10-22_clean-dataset_hydrated.csv
+/hydrated_data/2020-10-22_clean-dataset_hydrated.zip
